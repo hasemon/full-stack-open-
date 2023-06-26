@@ -1,24 +1,21 @@
 /* eslint-disable react/prop-types */
-const Header = ({course}) => {
+const Header = ({ course }) => {
   return (
     <>
       <h1>{course}</h1>
     </>
   );
-}
+};
 
-
-
-const Part = ({part}) => {
+const Part = ({ part }) => {
   return (
     <p>
       {part.name} {part.exercise}
     </p>
   );
-}
+};
 
-
-const Content = ({parts}) => {
+const Content = ({ parts }) => {
   return (
     <>
       <Part part={parts[0]} />
@@ -26,18 +23,17 @@ const Content = ({parts}) => {
       <Part part={parts[2]} />
     </>
   );
-}
+};
 
-const Total = ({parts}) => {
+const Total = ({ parts }) => {
   return (
     <>
       <p>Number of exercises {parts[0].exercise + parts[1].exercise + parts[2].exercise}</p>
     </>
   );
-}
+};
 
 const App = () => {
-
   const course = {
     name: "Half Stack application development",
     parts: [
@@ -55,7 +51,6 @@ const App = () => {
       },
     ],
   };
-
 
   return (
     <div>
