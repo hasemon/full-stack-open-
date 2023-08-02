@@ -6,7 +6,9 @@
 	"scripts": {
 		"start": "node index.js",
 		"dev": "nodemon index.js",
-		"test": "echo \"Error: no test specified\" && exit 1"
+		"test": "echo \"Error: no test specified\" && exit 1",
+		"build:ui": "shx rm -rf dist && cd ../phonebook-frontend && npm run build && shx cp -r ../phonebook-frontend/dist ../phonebook-backend",
+		"deploy:full": "npm run build:ui && git add . && git commit -m uibuild && git push"
 	},
 	"repository": {
 		"type": "git",
@@ -18,8 +20,10 @@
 	"author": "Matti Luukkainen",
 	"license": "MIT",
 	"dependencies": {
+		"cors": "^2.8.5",
 		"express": "^4.18.2",
-		"morgan": "^1.10.0"
+		"morgan": "^1.10.0",
+		"shx": "^0.3.4"
 	},
 	"devDependencies": {
 		"nodemon": "^3.0.1"
