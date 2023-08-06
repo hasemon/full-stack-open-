@@ -6,6 +6,18 @@ require('dotenv').config()
 
 const Person = require('./models/person')
 
+const unknownRoute = (request, response) => {
+	response.status(404).send('Unknown route')
+}
+const errorhandler = (error, request, response, next) => {
+	console.log(error)
+	if (error.name === 'CastError'){
+		return response.status(400).send({ error:'malformatted id'})
+	}
+	next(error)
+}
+
+
 app.use(express.static('dist'))
 app.use(cors())
 app.use(express.json())
@@ -15,9 +27,6 @@ morgan.token('body', (req, res) =>
 app.use(morgan(':method :url :status :res[content-length] - :response-time ms :body'));
 
 
-let persons = [
-
-];
 
 app.get("/", (request, response) => {
 	response.send(
@@ -29,11 +38,15 @@ app.get("/", (request, response) => {
 	);
 });
 
-app.get('/info', (request, response) => {
-	response.send(`
-	<p>Phonebook has info for ${persons.length} </p>
-	<p>${new Date()}</p>
-	`)
+app.get('/info', (request, response, next) => {
+	Person.countDocuments({})
+		.then(count => {
+			response.send(
+				`<p>Phonebook has info for ${count} persons</p>
+					<p>${new Date()}</p>`
+			)
+		})
+		.catch(error => next(error))
 })
 
 app.get("/api/persons", (request, response) => {
@@ -42,7 +55,7 @@ app.get("/api/persons", (request, response) => {
 	})
 });
 
-app.get('/api/persons/:id', (request, response) => {
+app.get('/api/persons/:id', (request, response, next) => {
 	Person.findById(request.params.id).then(person => {
 		if (person) {
 			response.json(person)
@@ -50,9 +63,10 @@ app.get('/api/persons/:id', (request, response) => {
 			response.status(404).end()
 		}
 	})
+		.catch(error => next(error) )
 })
 
-app.post('/api/persons', (request, response) => {
+app.post('/api/persons', (request, response, next) => {
 	const body = request.body;
 	if (!body.name || !body.number) {
 		return response.status(400).json({
@@ -60,25 +74,21 @@ app.post('/api/persons', (request, response) => {
 		});
 	}
 
-	// const existingPerson = persons.find( person => person.name === body.name )
-	// if (existingPerson) {
-    //     return response.status(400).json({
-    //         error: 'Person already exists'
-    //     });
-    // }
 	const person = new Person({
 		name: body.name,
 		number: body.number,
 	})
 
-	person.save().then(savedPerson => {
+	person.save()
+		.then(savedPerson => {
 		response.json(savedPerson)
 	})
+		.catch(error => next(error))
 });
 
 
 
-app.delete('/api/persons/:id', (request, response) => {
+app.delete('/api/persons/:id', (request, response, next) => {
 	Person.findByIdAndDelete(request.params.id)
 		.then(deletedPerson =>{
 			if (deletedPerson){
@@ -87,12 +97,30 @@ app.delete('/api/persons/:id', (request, response) => {
 				response.status(404).end()
 			}
 		})
-	persons = persons.filter(person => person.id !== id)
+		.catch(error => next(error))
 
-	response.status(204).end()
+})
+
+app.put('/api/persons/:id', (request, response, next) => {
+	const body = request.body;
+	const updatedPerson = {
+		name: body.name,
+		number: body.number
+	}
+	Person.findByIdAndUpdate(request.params.id, updatedPerson, {new: true})
+		.then(updatedPerson => {
+			if (updatedPerson){
+				response.json(updatedPerson)
+			}else {
+				response.status(404).end()
+			}
+		})
+		.catch(error => next(error))
 })
 
 
+app.use(unknownRoute)
+app.use(errorhandler)
 
 const PORT = process.env.PORT
 app.listen(PORT, () => {
