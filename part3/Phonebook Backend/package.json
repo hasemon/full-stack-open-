@@ -8,7 +8,8 @@
 		"dev": "nodemon index.js",
 		"test": "echo \"Error: no test specified\" && exit 1",
 		"build:ui": "shx rm -rf dist && cd ../phonebook-frontend && npm run build && shx cp -r ../phonebook-frontend/dist ../phonebook-backend",
-		"deploy:full": "npm run build:ui && git add . && git commit -m uibuild && git push"
+		"deploy:full": "npm run build:ui && git add . && git commit -m uibuild && git push",
+		"lint": "eslint ."
 	},
 	"repository": {
 		"type": "git",
@@ -28,6 +29,7 @@
 		"shx": "^0.3.4"
 	},
 	"devDependencies": {
+		"eslint": "^8.46.0",
 		"nodemon": "^3.0.1"
 	}
 }
