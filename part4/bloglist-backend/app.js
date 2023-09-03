@@ -4,7 +4,6 @@ const blogsRouter = require('./controllers/blogs')
 const config = require("./utils/config");
 const mongoose = require("mongoose");
 const logger = require('./utils/logger')
-
 const app = express()
 
 

@@ -2,8 +2,8 @@ POST http://localhost:3001/api/blogs
 Content-Type: application/json
 
 {
-  "title" : "I am learning fullstack web development",
-  "author": "Emon",
-  "url": "https://fullstackopen.com/",
+  "title" : "Go To Statement Considered Harmful",
+  "author": "Edsger W. Dijkstra",
+  "url": "http://www.u.arizona.edu/~rubinson/copyright_violations/Go_To_Considered_Harmful.html",
   "likes" : 5
 }
